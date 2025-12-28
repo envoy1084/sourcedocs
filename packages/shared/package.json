@@ -1,0 +1,19 @@
+{
+  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
+  "dependencies": {
+    "effect": "^3.19.13"
+  },
+  "description": "",
+  "devDependencies": {
+    "@sourcedocs/config": "workspace:*",
+    "@types/node": "^25.0.3"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@sourcedocs/shared",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.0"
+}

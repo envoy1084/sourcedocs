@@ -104,9 +104,9 @@
       },
       "performance": {
         "noAwaitInLoops": "error",
-        "noBarrelFile": "error",
+        "noBarrelFile": "off",
         "noNamespaceImport": "error",
-        "noReExportAll": "error",
+        "noReExportAll": "off",
         "recommended": true
       },
       "security": {
@@ -145,7 +145,7 @@
         "useDefaultParameterLast": "error",
         "useDefaultSwitchClause": "error",
         "useExplicitLengthCheck": "error",
-        "useExportsLast": "error",
+        "useExportsLast": "off",
         "useExportType": "error",
         "useFilenamingConvention": {
           "level": "error",
