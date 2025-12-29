@@ -1,0 +1,182 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "exclude": {
+      "default": ["**/node_modules/**", "**/.git/**", "**/dist/**"],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "include": {
+      "description": "Glob patterns for source files to scan.",
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "logLevel": {
+      "enum": ["error", "warn", "info", "debug", "silent"],
+      "type": "string"
+    },
+    "output": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter": {
+          "default": "markdown",
+          "enum": ["docusaurus", "gitbook", "fumadocs", "markdown", "json"],
+          "type": "string"
+        },
+        "clean": {
+          "type": "boolean"
+        },
+        "dir": {
+          "type": "string"
+        },
+        "sitemap": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "parsing": {
+      "additionalProperties": false,
+      "properties": {
+        "commentTokens": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "properties": {},
+          "required": [],
+          "type": "object"
+        },
+        "includeMarkdown": {
+          "type": "boolean"
+        },
+        "interpolation": {
+          "additionalItems": false,
+          "default": ["{{", "}}"],
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "minItems": 2,
+          "type": "array"
+        },
+        "languageMap": {
+          "additionalProperties": {
+            "enum": [
+              "solidity",
+              "rust",
+              "typescript",
+              "python",
+              "go",
+              "plaintext",
+              "markdown",
+              "javascript",
+              "yaml",
+              "json"
+            ],
+            "type": "string"
+          },
+          "default": {},
+          "properties": {},
+          "required": [],
+          "type": "object"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "plugins": {
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "options": {
+                "additionalProperties": {
+                  "$id": "/schemas/any",
+                  "title": "any"
+                },
+                "properties": {},
+                "required": [],
+                "type": "object"
+              }
+            },
+            "required": ["name"],
+            "type": "object"
+          }
+        ]
+      },
+      "type": "array"
+    },
+    "project": {
+      "additionalProperties": false,
+      "properties": {
+        "branch": {
+          "default": "main",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "root": {
+      "type": "string"
+    },
+    "validation": {
+      "additionalProperties": false,
+      "properties": {
+        "brokenLinks": {
+          "default": "strict",
+          "enum": ["strict", "warn", "ignore"],
+          "type": "string"
+        },
+        "duplicateIds": {
+          "default": "strict",
+          "enum": ["strict", "warn", "ignore"],
+          "type": "string"
+        },
+        "emptyChapters": {
+          "default": "warn",
+          "enum": ["strict", "warn", "ignore"],
+          "type": "string"
+        },
+        "unparsedFiles": {
+          "default": "ignore",
+          "enum": ["strict", "warn", "ignore"],
+          "type": "string"
+        }
+      },
+      "required": [
+        "brokenLinks",
+        "duplicateIds",
+        "emptyChapters",
+        "unparsedFiles"
+      ],
+      "type": "object"
+    }
+  },
+  "required": ["include"],
+  "type": "object"
+}
