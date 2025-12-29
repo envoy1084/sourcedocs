@@ -10,10 +10,12 @@
   },
   "keywords": [],
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "./src/index.ts",
   "name": "@sourcedocs/shared",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
+  "types": "./src/index.ts",
   "version": "0.0.0"
 }

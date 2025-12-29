@@ -2,18 +2,23 @@
   "author": "Vedant Chainani <vedant@envoy1084.xyz>",
   "dependencies": {
     "@effect/platform": "^0.94.0",
-    "@effect/platform-node": "^0.104.0",
-    "@sourcedocs/shared": "workspace:*",
     "c12": "^3.3.3",
-    "effect": "^3.19.13",
-    "fs-extra": "^11.3.3"
+    "effect": "^3.19.13"
   },
   "description": "",
   "devDependencies": {
+    "@effect/platform-node": "^0.104.0",
     "@sourcedocs/config": "workspace:*",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.0.3",
+    "tsup": "^8.5.1",
     "tsx": "^4.21.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "files": [
     "dist",
@@ -21,11 +26,14 @@
   ],
   "keywords": [],
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "name": "@sourcedocs/core",
   "scripts": {
-    "build": "pnpm --version",
-    "prebuild": "tsx scripts/prebuild.ts"
+    "build": "tsup",
+    "prebuild": "tsx ./scripts/prebuild.ts"
   },
+  "type": "module",
+  "types": "./dist/index.d.ts",
   "version": "0.0.0"
 }

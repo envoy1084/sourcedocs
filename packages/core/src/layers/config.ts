@@ -63,5 +63,5 @@ const resolveConfigInternal = (options: LoadConfigOptions) =>
     return finalConfig;
   });
 
-export const SourcedocsConfigLive = (options: LoadConfigOptions) =>
+export const SourcedocsConfigLayer = (options: LoadConfigOptions) =>
   Layer.effect(SourcedocsConfig, resolveConfigInternal(options));

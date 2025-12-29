@@ -137,16 +137,24 @@ export const ParsingConfig = Schema.Struct({
  */
 export const ValidationConfig = Schema.Struct({
   /** Fail if a `@link: id` points to nowhere. */
-  brokenLinks: ValidationMode.annotations({ default: "strict" }),
+  brokenLinks: Schema.optionalWith(ValidationMode, {
+    default: () => "strict",
+  }).annotations({ default: "strict" }),
 
   /** Fail if a snippet ID is defined twice. */
-  duplicateIds: ValidationMode.annotations({ default: "strict" }),
+  duplicateIds: Schema.optionalWith(ValidationMode, {
+    default: () => "strict",
+  }).annotations({ default: "strict" }),
 
   /** Fail if a Chapter has no content/sections. */
-  emptyChapters: ValidationMode.annotations({ default: "warn" }),
+  emptyChapters: Schema.optionalWith(ValidationMode, {
+    default: () => "warn",
+  }).annotations({ default: "warn" }),
 
   /** Fail if a file matches 'include' but has no parsing tags. */
-  unparsedFiles: ValidationMode.annotations({ default: "ignore" }),
+  unparsedFiles: Schema.optionalWith(ValidationMode, {
+    default: () => "ignore",
+  }).annotations({ default: "ignore" }),
 });
 
 export const SourceDocsConfigSchema = Schema.Struct({

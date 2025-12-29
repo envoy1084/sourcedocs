@@ -168,12 +168,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "brokenLinks",
-        "duplicateIds",
-        "emptyChapters",
-        "unparsedFiles"
-      ],
+      "required": [],
       "type": "object"
     }
   },

@@ -13,5 +13,5 @@
     "noEmit": false,
     "target": "ES2020"
   },
-  "extends": "./base.jsonc"
+  "extends": "./base.json"
 }
