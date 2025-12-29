@@ -12,9 +12,9 @@ const program = Effect.gen(function* () {
   const JSON_SCHEMA_BASE_PATH = path.join(cwd, "schemas");
   const JSON_SCHEMA_PATH = path.join(JSON_SCHEMA_BASE_PATH, "schema.json");
 
-  const exists = yield* fs.exists(JSON_SCHEMA_PATH);
+  const dirExists = yield* fs.exists(JSON_SCHEMA_BASE_PATH);
 
-  if (!exists) {
+  if (!dirExists) {
     yield* fs.makeDirectory(JSON_SCHEMA_BASE_PATH);
   }
 

@@ -6,7 +6,7 @@ const AdapterType = Schema.Literal(
   "fumadocs",
   "markdown",
   "json",
-);
+).annotations({ title: "AdapterType" });
 
 export const SupportedLanguage = Schema.Literal(
   "solidity",
@@ -19,16 +19,17 @@ export const SupportedLanguage = Schema.Literal(
   "javascript",
   "yaml",
   "json",
-);
+).annotations({ title: "SupportedLanguage" });
 
-export const LogLevel = Schema.Literal(
-  "error",
+export const ValidationMode = Schema.Literal(
+  "strict",
   "warn",
-  "info",
-  "debug",
-  "silent",
+  "ignore",
+).annotations({ title: "ValidationMode" });
+
+const URLSchema = Schema.String.pipe(
+  Schema.pattern(/^(https?:\/\/)[^\s/$.?#].[^\s]*$/i),
 );
-export const ValidationMode = Schema.Literal("strict", "warn", "ignore");
 
 /**
  * Metadata about the project itself.
@@ -43,13 +44,24 @@ export const ProjectConfig = Schema.Struct({
   }).annotations({ default: "main" }),
 
   /** Project name (used in titles) */
-  name: Schema.optional(Schema.String),
+  name: Schema.optionalWith(Schema.String, {
+    default: () => "Documentation",
+  }).annotations({ default: "Documentation" }),
 
   /** * The base URL of the repository.
-   * @example "https://github.com/sourcedocs/core"
+   *
+   * @default "https://github.com/envoy1084/sourcedocs"
    */
-  url: Schema.optional(Schema.String),
-});
+  repository: Schema.optionalWith(
+    URLSchema.annotations({
+      message: () => "Invalid repository URL",
+      title: "Repository",
+    }),
+    {
+      default: () => "https://github.com/envoy1084/sourcedocs",
+    },
+  ).annotations({ default: "https://github.com/envoy1084/sourcedocs" }),
+}).annotations({ title: "ProjectConfig" });
 
 /**
  * Configuration for the output artifacts.
@@ -76,7 +88,7 @@ export const OutputConfig = Schema.Struct({
   sitemap: Schema.optionalWith(Schema.Boolean, {
     default: () => false,
   }),
-});
+}).annotations({ title: "OutputConfig" });
 
 /**
  * Rules for parsing source code.
@@ -130,7 +142,7 @@ export const ParsingConfig = Schema.Struct({
       default: () => ({}),
     },
   ).annotations({ default: {} }),
-});
+}).annotations({ title: "ParsingConfig" });
 
 /**
  * Validation rules to ensure documentation integrity.
@@ -155,7 +167,7 @@ export const ValidationConfig = Schema.Struct({
   unparsedFiles: Schema.optionalWith(ValidationMode, {
     default: () => "ignore",
   }).annotations({ default: "ignore" }),
-});
+}).annotations({ title: "ValidationConfig" });
 
 export const SourceDocsConfigSchema = Schema.Struct({
   /**
@@ -171,21 +183,33 @@ export const SourceDocsConfigSchema = Schema.Struct({
   /**
    * List of glob patterns to include.
    * @example ["contracts/**\/*.sol", "scripts/*.ts"]
+   * @default []
    */
-  include: Schema.Array(Schema.String).annotations({
+  include: Schema.optionalWith(Schema.Array(Schema.String), {
+    default: () => [],
+  }).annotations({
     description: "Glob patterns for source files to scan.",
   }),
 
-  /**
-   * Logging verbosity.
-   */
-  logLevel: Schema.optional(LogLevel),
-
   /** Output settings */
-  output: Schema.optional(OutputConfig),
+  output: Schema.optionalWith(OutputConfig, {
+    default: () => ({
+      adapter: "markdown",
+      clean: true,
+      dir: "./docs",
+      sitemap: false,
+    }),
+  }),
 
   /** Parsing behavior settings */
-  parsing: Schema.optional(ParsingConfig),
+  parsing: Schema.optionalWith(ParsingConfig, {
+    default: () => ({
+      commentTokens: {},
+      includeMarkdown: true,
+      interpolation: ["{{", "}}"],
+      languageMap: {},
+    }),
+  }),
 
   /**
    * Plugins definitions.
@@ -207,7 +231,13 @@ export const SourceDocsConfigSchema = Schema.Struct({
     ),
   ),
 
-  project: Schema.optional(ProjectConfig),
+  project: Schema.optionalWith(ProjectConfig, {
+    default: () => ({
+      branch: "main",
+      name: "Documentation",
+      repository: "https://github.com/envoy1084/sourcedocs",
+    }),
+  }),
   /**
    * The root directory of the project.
    *
@@ -218,12 +248,18 @@ export const SourceDocsConfigSchema = Schema.Struct({
   }),
 
   /** Validation strictness */
-  validation: Schema.optional(ValidationConfig),
-});
+  validation: Schema.optionalWith(ValidationConfig, {
+    default: () => ({
+      brokenLinks: "strict",
+      duplicateIds: "strict",
+      emptyChapters: "warn",
+      unparsedFiles: "ignore",
+    }),
+  }),
+}).annotations({ title: "SourceDocsConfig" });
 
 export type AdapterType = typeof AdapterType.Type;
 export type SupportedLanguage = typeof SupportedLanguage.Type;
-export type LogLevel = typeof LogLevel.Type;
 export type ValidationMode = typeof ValidationMode.Type;
 export type ProjectConfig = typeof ProjectConfig.Type;
 export type OutputConfig = typeof OutputConfig.Type;

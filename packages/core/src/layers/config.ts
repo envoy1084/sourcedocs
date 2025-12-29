@@ -4,7 +4,15 @@ import {
   SourceDocsConfigSchema,
 } from "@sourcedocs/shared";
 import { loadConfig as c12LoadConfig } from "c12";
-import { Context, Effect, Either, Layer, ParseResult, Schema } from "effect";
+import {
+  Context,
+  Data,
+  Effect,
+  Either,
+  Layer,
+  ParseResult,
+  Schema,
+} from "effect";
 
 export class SourcedocsConfig extends Context.Tag("SourcedocsConfig")<
   SourcedocsConfig,
@@ -16,17 +24,29 @@ export type LoadConfigOptions = {
   overrides?: Partial<SourceDocsConfig>;
 };
 
+class ConfigError extends Data.TaggedError("ConfigError")<{
+  message: string;
+  error: unknown;
+}> {}
+
 const loadConfigC12 = (cwd: string, options: LoadConfigOptions) => {
-  return Effect.promise(() => {
-    return c12LoadConfig({
-      configFile: options.configFile,
-      cwd,
-      dotenv: true,
-      globalRc: true,
-      name: "sourcedocs",
-      overrides: options.overrides,
-      rcFile: ".sourcedocsrc",
-    });
+  return Effect.tryPromise({
+    catch: (error) => {
+      const err = error as Error;
+      console.error(err.message);
+      return new ConfigError({ error, message: "Failed to load config" });
+    },
+    try: () => {
+      return c12LoadConfig({
+        configFile: options.configFile,
+        cwd,
+        dotenv: true,
+        globalRc: true,
+        name: "sourcedocs",
+        overrides: options.overrides,
+        rcFile: ".sourcedocsrc",
+      });
+    },
   });
 };
 
@@ -38,16 +58,17 @@ const resolveConfigInternal = (options: LoadConfigOptions) =>
     // Load via C12
     const { config: rawConfig } = yield* loadConfigC12(cwd, options);
 
+    console.log(rawConfig);
+
     // Validate via Schema
     const result = Schema.decodeUnknownEither(SourceDocsConfigSchema)(
       rawConfig || {},
     );
 
     if (Either.isLeft(result)) {
-      // Nice error formatting
       const errorMsg = ParseResult.TreeFormatter.formatErrorSync(result.left);
-      yield* Effect.logError(`Configuration Error:\n${errorMsg}`);
-      return yield* Effect.fail(new Error("Invalid config"));
+      yield* Effect.logError(errorMsg);
+      return yield* Effect.fail("error");
     }
 
     const validatedConfig = result.right;
