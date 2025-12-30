@@ -2,14 +2,14 @@
   "author": "Vedant Chainani <vedant@envoy1084.xyz>",
   "dependencies": {
     "@effect/platform": "^0.94.0",
+    "@effect/platform-node": "^0.104.0",
     "c12": "^3.3.3",
-    "effect": "^3.19.13"
+    "effect": "^3.19.13",
+    "glob": "^13.0.0"
   },
   "description": "",
   "devDependencies": {
-    "@effect/platform-node": "^0.104.0",
     "@sourcedocs/config": "workspace:*",
-    "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.0.3",
     "tsup": "^8.5.1",
     "tsx": "^4.21.0"

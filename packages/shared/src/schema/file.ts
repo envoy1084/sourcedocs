@@ -35,12 +35,3 @@ export const RawFile = Schema.Struct({
 });
 
 export type RawFile = typeof RawFile.Type;
-
-// Errors specific to collection
-export class CollectionError extends Schema.TaggedError<CollectionError>()(
-  "CollectionError",
-  {
-    message: Schema.String,
-    path: Schema.optional(Schema.String),
-  },
-) {}
