@@ -10,7 +10,5 @@
     "types": ["vite/client"],
     "useDefineForClassFields": true
   },
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
-  "extends": "./base.jsonc",
-  "include": ["**/*.ts", "**/*.tsx"]
+  "extends": "./base.json"
 }

@@ -10,18 +10,18 @@
     "./biome/react": "./biome/react.json",
     "./biome/test": "./biome/test.json",
     "./tsconfig/app/next": "./tsconfig/next.json",
-    "./tsconfig/app/react": "./tsconfig/react.jsonc",
-    "./tsconfig/app/vite": "./tsconfig/vite.jsonc",
-    "./tsconfig/library/browser": "./tsconfig/browser-library.jsonc",
-    "./tsconfig/library/node": "./tsconfig/node-library.jsonc",
-    "./tsconfig/library/react": "./tsconfig/react-library.jsonc"
+    "./tsconfig/app/react": "./tsconfig/react.json",
+    "./tsconfig/app/vite": "./tsconfig/vite.json",
+    "./tsconfig/library/browser": "./tsconfig/browser-library.json",
+    "./tsconfig/library/node": "./tsconfig/node-library.json",
+    "./tsconfig/library/react": "./tsconfig/react-library.json"
   },
   "files": [
     "./biome",
     "./tsconfig"
   ],
   "license": "MIT",
-  "name": "@repo/config",
+  "name": "@sourcedocs/config",
   "scripts": {
     "format": "pnpm exec biome format",
     "format:write": "pnpm exec biome format --write",

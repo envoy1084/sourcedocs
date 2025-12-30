@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "types": ["vite/client"]
-  },
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
-  "extends": "./react.jsonc",
-  "include": ["**/*.ts", "**/*.tsx"]
-}

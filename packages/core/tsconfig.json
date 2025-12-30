@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "incremental": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@sourcedocs/shared": ["../shared/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": ["@sourcedocs/config/tsconfig/library/node"],
+  "include": ["**/*.ts", "**/*.tsx"]
+}

@@ -32,6 +32,5 @@
 
     // Code Quality & Best Practices
     "verbatimModuleSyntax": true
-  },
-  "exclude": ["node_modules", "dist", "build", "coverage"]
+  }
 }
