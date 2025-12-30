@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-const AdapterType = Schema.Literal(
+export const AdapterType = Schema.Literal(
   "docusaurus",
   "gitbook",
   "fumadocs",
@@ -28,7 +28,9 @@ export const ValidationMode = Schema.Literal(
 ).annotations({ title: "ValidationMode" });
 
 const URLSchema = Schema.String.pipe(
-  Schema.pattern(/^(https?:\/\/)[^\s/$.?#].[^\s]*$/i),
+  Schema.pattern(
+    /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
+  ),
 );
 
 /**
@@ -43,7 +45,9 @@ export const ProjectConfig = Schema.Struct({
     default: () => "main",
   }).annotations({ default: "main" }),
 
-  /** Project name (used in titles) */
+  /** Project name (used in titles)
+   * @default "Documentation"
+   */
   name: Schema.optionalWith(Schema.String, {
     default: () => "Documentation",
   }).annotations({ default: "Documentation" }),
@@ -67,22 +71,28 @@ export const ProjectConfig = Schema.Struct({
  * Configuration for the output artifacts.
  */
 export const OutputConfig = Schema.Struct({
-  /** The target platform adapter. */
+  /** The target platform adapter.
+   * @default "markdown"
+   */
   adapter: Schema.optionalWith(AdapterType, {
     default: () => "markdown" as const,
   }).annotations({ default: "markdown" }),
 
-  /** Clean the output directory before building? */
+  /** Clean the output directory before building?
+   * @default true
+   */
   clean: Schema.optionalWith(Schema.Boolean, {
     default: () => true,
   }),
-  /** Directory where generated docs will be placed. */
+
+  /** Directory where generated docs will be placed.
+   * @default "docs"
+   */
   dir: Schema.optionalWith(Schema.String, {
-    default: () => "./docs",
+    default: () => "docs",
   }),
   /**
    * Generate a sitemap.xml file?
-   *
    * @default false
    */
   sitemap: Schema.optionalWith(Schema.Boolean, {
@@ -97,6 +107,7 @@ export const ParsingConfig = Schema.Struct({
   /**
    * Define what constitutes a "doc comment" in specific files.
    * @example { ".py": "#" }
+   * @default {}
    */
   commentTokens: Schema.optionalWith(
     Schema.Record({
@@ -111,6 +122,7 @@ export const ParsingConfig = Schema.Struct({
   /**
    * If true, regular markdown files (.md) in the source tree
    * are treated as chapters and included in the graph.
+   * @default true
    */
   includeMarkdown: Schema.optionalWith(Schema.Boolean, {
     default: () => true,
@@ -132,6 +144,7 @@ export const ParsingConfig = Schema.Struct({
   /**
    * Custom mapping of file extensions to language parsers.
    * @example { ".move": "rust" }
+   * @default {}
    */
   languageMap: Schema.optionalWith(
     Schema.Record({
@@ -148,22 +161,30 @@ export const ParsingConfig = Schema.Struct({
  * Validation rules to ensure documentation integrity.
  */
 export const ValidationConfig = Schema.Struct({
-  /** Fail if a `@link: id` points to nowhere. */
+  /** Fail if a `@link: id` points to nowhere.
+   * @default "strict"
+   */
   brokenLinks: Schema.optionalWith(ValidationMode, {
     default: () => "strict",
   }).annotations({ default: "strict" }),
 
-  /** Fail if a snippet ID is defined twice. */
+  /** Fail if a snippet ID is defined twice.
+   * @default "strict"
+   */
   duplicateIds: Schema.optionalWith(ValidationMode, {
     default: () => "strict",
   }).annotations({ default: "strict" }),
 
-  /** Fail if a Chapter has no content/sections. */
+  /** Fail if a Chapter has no content/sections.
+   * @default "warn"
+   */
   emptyChapters: Schema.optionalWith(ValidationMode, {
     default: () => "warn",
   }).annotations({ default: "warn" }),
 
-  /** Fail if a file matches 'include' but has no parsing tags. */
+  /** Fail if a file matches 'include' but has no parsing tags.
+   * @default "ignore"
+   */
   unparsedFiles: Schema.optionalWith(ValidationMode, {
     default: () => "ignore",
   }).annotations({ default: "ignore" }),
@@ -216,8 +237,9 @@ export const SourceDocsConfigSchema = Schema.Struct({
    * We accept:
    * 1. String: "my-plugin" (resolved from node_modules)
    * 2. Object: { name: "my-plugin", options: {} } (Safer for some configs)
+   * @default []
    */
-  plugins: Schema.optional(
+  plugins: Schema.optionalWith(
     Schema.Array(
       Schema.Union(
         Schema.String, // "@sourcedocs/plugin-mermaid"
@@ -229,8 +251,12 @@ export const SourceDocsConfigSchema = Schema.Struct({
         }),
       ),
     ),
+    {
+      default: () => [],
+    },
   ),
 
+  /** Project metadata.*/
   project: Schema.optionalWith(ProjectConfig, {
     default: () => ({
       branch: "main",
@@ -238,6 +264,7 @@ export const SourceDocsConfigSchema = Schema.Struct({
       repository: "https://github.com/envoy1084/sourcedocs",
     }),
   }),
+
   /**
    * The root directory of the project.
    *

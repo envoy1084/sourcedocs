@@ -32,8 +32,6 @@ class ConfigError extends Data.TaggedError("ConfigError")<{
 const loadConfigC12 = (cwd: string, options: LoadConfigOptions) => {
   return Effect.tryPromise({
     catch: (error) => {
-      const err = error as Error;
-      console.error(err.message);
       return new ConfigError({ error, message: "Failed to load config" });
     },
     try: () => {
@@ -58,8 +56,6 @@ const resolveConfigInternal = (options: LoadConfigOptions) =>
     // Load via C12
     const { config: rawConfig } = yield* loadConfigC12(cwd, options);
 
-    console.log(rawConfig);
-
     // Validate via Schema
     const result = Schema.decodeUnknownEither(SourceDocsConfigSchema)(
       rawConfig || {},
@@ -68,7 +64,9 @@ const resolveConfigInternal = (options: LoadConfigOptions) =>
     if (Either.isLeft(result)) {
       const errorMsg = ParseResult.TreeFormatter.formatErrorSync(result.left);
       yield* Effect.logError(errorMsg);
-      return yield* Effect.fail("error");
+      return yield* Effect.fail(
+        new ConfigError({ error: result.left, message: errorMsg }),
+      );
     }
 
     const validatedConfig = result.right;
