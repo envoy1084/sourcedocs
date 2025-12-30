@@ -193,7 +193,7 @@ export const ValidationConfig = Schema.Struct({
 export const SourceDocsConfigSchema = Schema.Struct({
   /**
    * List of glob patterns to exclude.
-   * @default ["node_modules", ".git", "dist"]
+   * @default ["**\/node_modules\/**", "**\/.git\/**", "**\/dist\/**"]
    */
   exclude: Schema.optionalWith(Schema.Array(Schema.String), {
     default: () => ["**/node_modules/**", "**/.git/**", "**/dist/**"],
@@ -217,7 +217,7 @@ export const SourceDocsConfigSchema = Schema.Struct({
     default: () => ({
       adapter: "markdown",
       clean: true,
-      dir: "./docs",
+      dir: "docs",
       sitemap: false,
     }),
   }),
