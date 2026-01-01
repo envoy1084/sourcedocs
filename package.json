@@ -5,9 +5,11 @@
     "@commitlint/config-conventional": "^20.2.0",
     "@sourcedocs/config": "workspace:*",
     "@total-typescript/ts-reset": "^0.6.1",
+    "@vitest/coverage-v8": "4.0.16",
     "lefthook": "^2.0.13",
     "turbo": "^2.7.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
   },
   "name": "sourcedocs",
   "packageManager": "pnpm@10.26.2",
@@ -15,12 +17,14 @@
   "scripts": {
     "build": "turbo build",
     "commitlint": "commitlint --edit",
+    "coverage": "vitest run --coverage",
     "dev": "turbo dev",
     "format": "pnpm exec biome format --write",
     "format:check": "pnpm exec biome format",
     "lint": "pnpm exec biome check --write",
     "lint:check": "pnpm exec biome check",
     "lint:write": "turbo lint:write",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "test": "vitest run"
   }
 }
