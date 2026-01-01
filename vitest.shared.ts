@@ -1,9 +1,4 @@
-import path, { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import type { ViteUserConfig } from "vitest/config";
-
-const Dirname = dirname(fileURLToPath(import.meta.url));
 
 const isCI = process.env.CI === "true";
 
@@ -13,7 +8,7 @@ export const shared: ViteUserConfig = {
   },
   test: {
     coverage: {
-      enabled: true,
+      enabled: isCI,
       exclude: [
         "**/*.test.*",
         "**/*.spec.*",
@@ -37,7 +32,6 @@ export const shared: ViteUserConfig = {
     sequence: {
       concurrent: true,
     },
-    setupFiles: [path.join(Dirname, "vitest.setup.ts")],
     testTimeout: 20_000,
   },
 };

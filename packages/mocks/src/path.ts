@@ -8,16 +8,14 @@ export const InMemoryPath = (root: string) =>
     Path,
     Path.of({
       ...path.posix,
-      fromFileUrl: (url: URL) => {
-        return Effect.sync(() => url.pathname);
-      },
+
+      fromFileUrl: (url) => Effect.sync(() => url.pathname),
+
       resolve: (...segments: string[]) => {
         return path.posix.resolve(root, ...segments);
       },
 
-      toFileUrl: (path: string) => {
-        return Effect.sync(() => new URL(`file://${path}`));
-      },
+      toFileUrl: (path) => Effect.sync(() => new URL(`file://${path}`)),
 
       [TypeId]: TypeId,
     }),

@@ -6,11 +6,11 @@ import { InMemoryFileSystem } from "./fs";
 import { InMemoryPath } from "./path";
 
 export const InMemoryContext = (
-  initialStructure: NestedDirectoryJSON,
+  initialStructure?: NestedDirectoryJSON,
   cwd?: string,
 ) =>
   Layer.mergeAll(
-    InMemoryFileSystem(initialStructure, cwd ?? "/"),
+    InMemoryFileSystem(initialStructure ?? {}, cwd ?? "/"),
     InMemoryPath(cwd ?? "/"),
     InMemoryKeyValueStore,
   );

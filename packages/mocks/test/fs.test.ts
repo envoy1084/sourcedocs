@@ -2,7 +2,7 @@
 
 import { FileSystem, Path } from "@effect/platform";
 import { describe, expect, it } from "@effect/vitest";
-import { Effect, Exit } from "effect";
+import { Effect, Exit, Option } from "effect";
 
 import { InMemoryContext } from "../src";
 
@@ -250,5 +250,121 @@ describe("Mock File System", () => {
       const Perms = 0o777;
       yield* fs.chmod(path, Perms);
     }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+  );
+
+  it.effect("link: creates a link", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+
+      const oldPath = yield* getAbsLocation("file.txt");
+      const newPath = yield* getAbsLocation("link.txt");
+
+      yield* fs.link(oldPath, newPath);
+
+      expect(yield* fs.exists(oldPath)).toBe(true);
+      expect(yield* fs.exists(newPath)).toBe(true);
+
+      const oldContent = yield* fs.readFileString(oldPath);
+      const newContent = yield* fs.readFileString(newPath);
+
+      expect(oldContent).toEqual(newContent);
+    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+  );
+
+  it.effect("makeTempDirectory: creates a temp directory at root", () => {
+    return Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+
+      const absPath = yield* fs.makeTempDirectory();
+
+      expect(yield* fs.exists(absPath)).toBe(true);
+    }).pipe(Effect.provide(InMemoryContext(initialStructure)));
+  });
+
+  it.effect("makeTempDirectory: creates a temp directory inside a dir", () => {
+    return Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+
+      const absPath = yield* fs.makeTempDirectory({ directory: "dir" });
+      const root = absPath.split("/")[1] ?? "";
+      expect(root).toBe("dir");
+      expect(yield* fs.exists(absPath)).toBe(true);
+    }).pipe(Effect.provide(InMemoryContext(initialStructure)));
+  });
+
+  it.effect("makeTempDirectory: creates a temp with prefix", () => {
+    return Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+
+      const absPath = yield* fs.makeTempDirectory({ prefix: "temp-" });
+      const match = absPath.match(/temp-(.*)/);
+
+      expect(match?.[0]).toBeTruthy();
+      expect(yield* fs.exists(absPath)).toBe(true);
+    }).pipe(Effect.provide(InMemoryContext(initialStructure)));
+  });
+
+  it.effect("open: opens file", () =>
+    Effect.scoped(
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+
+        const absPath = yield* getAbsLocation("file.txt");
+
+        const file = yield* fs.open(absPath);
+
+        file.read(Buffer.alloc(10));
+
+        const stats = yield* file.stat;
+
+        expect(stats.type).toBe("File");
+      }),
+    ).pipe(Effect.provide(InMemoryContext(initialStructure))),
+  );
+
+  it.effect("open: reads a certain number of bytes", () =>
+    Effect.scoped(
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const absPath = yield* getAbsLocation("file.txt");
+        const file = yield* fs.open(absPath);
+
+        const bytes = yield* file.readAlloc(FileSystem.Size(3));
+
+        expect(Option.isSome(bytes)).toBe(true);
+
+        const data = yield* fs.readFileString(absPath);
+
+        if (Option.isSome(bytes)) {
+          expect(data.slice(0, 3)).toBe(
+            Buffer.from(bytes.value).toString("utf-8"),
+          );
+        }
+      }),
+    ).pipe(Effect.provide(InMemoryContext(initialStructure))),
+  );
+
+  it.effect("open: should seek and write to file", () =>
+    Effect.scoped(
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const absPath = yield* getAbsLocation("file.txt");
+        const file = yield* fs.open(absPath);
+
+        yield* file.seek(5, "start"); // Cursor at position 3
+        yield* file.write(Buffer.from("world"));
+
+        const data = yield* fs.readFileString(absPath);
+
+        expect(data).toBe("helloworld");
+
+        yield* file.seek(-10, "current");
+        yield* file.write(Buffer.from("world"));
+
+        const data2 = yield* fs.readFileString(absPath);
+
+        expect(data2).toBe("worldworld");
+      }),
+    ).pipe(Effect.provide(InMemoryContext(initialStructure))),
   );
 });

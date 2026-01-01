@@ -24,7 +24,7 @@
     "lint:check": "pnpm exec biome check",
     "lint:write": "turbo lint:write",
     "prepare": "lefthook install",
-    "test": "vitest",
+    "test": "vitest run",
     "test:changed": "vitest run --changed",
     "test:ci": "vitest run --coverage",
     "test:watch": "vitest --watch"

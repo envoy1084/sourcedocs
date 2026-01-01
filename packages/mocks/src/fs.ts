@@ -5,7 +5,6 @@
 /** biome-ignore-all lint/style/noNestedTernary: safe */
 
 import crypto from "node:crypto";
-import os from "node:os";
 import path from "node:path";
 
 import { FileSystem } from "@effect/platform";
@@ -177,7 +176,7 @@ const makeDirectory = (fs: IFs) => {
 };
 
 // makeTempDirectory
-const makeTempDirectoryFactory = (fs: IFs, method: string) => {
+const makeTempDirectoryFactory = (fs: IFs, cwd: string, method: string) => {
   const nodeMkdtemp = effectify(
     fs.mkdtemp,
     handleErrnoException("FileSystem", method),
@@ -186,19 +185,17 @@ const makeTempDirectoryFactory = (fs: IFs, method: string) => {
   return (options?: FileSystem.MakeTempDirectoryOptions) =>
     Effect.suspend(() => {
       const prefix = options?.prefix ?? "";
-      // TODO: Maybe change this to not use node:path and node:os
       const directory =
         typeof options?.directory === "string"
-          ? path.join(options.directory, ".")
-          : os.tmpdir();
-
+          ? path.join(cwd, options.directory, ".")
+          : "";
       return nodeMkdtemp(
-        prefix ? path.join(directory, prefix) : `${directory}/`,
+        prefix ? path.join(cwd, directory, prefix) : `${directory}/`,
       );
     });
 };
-const makeTempDirectory = (fs: IFs) =>
-  makeTempDirectoryFactory(fs, "makeTempDirectory");
+const makeTempDirectory = (fs: IFs, cwd: string) =>
+  makeTempDirectoryFactory(fs, cwd, "makeTempDirectory");
 
 // remove
 const removeFactory = (fs: IFs, method: string) => {
@@ -216,8 +213,12 @@ const removeFactory = (fs: IFs, method: string) => {
 const remove = (fs: IFs) => removeFactory(fs, "remove");
 
 // makeTempDirectoryScoped
-const makeTempDirectoryScoped = (fs: IFs) => {
-  const makeDirectory = makeTempDirectoryFactory(fs, "makeTempDirectoryScoped");
+const makeTempDirectoryScoped = (fs: IFs, cwd: string) => {
+  const makeDirectory = makeTempDirectoryFactory(
+    fs,
+    cwd,
+    "makeTempDirectoryScoped",
+  );
   const removeDirectory = removeFactory(fs, "makeTempDirectoryScoped");
   return (options?: FileSystem.MakeTempDirectoryOptions) =>
     Effect.acquireRelease(makeDirectory(options), (directory) =>
@@ -461,8 +462,8 @@ const makeFile = (fs: IFs) => {
 };
 
 // makeTempFile
-const makeTempFileFactory = (fs: IFs, method: string) => {
-  const makeDirectory = makeTempDirectoryFactory(fs, method);
+const makeTempFileFactory = (fs: IFs, cwd: string, method: string) => {
+  const makeDirectory = makeTempDirectoryFactory(fs, cwd, method);
   const open = openFactory(fs, method);
   const randomHexString = (bytes: number) =>
     Effect.sync(() => crypto.randomBytes(bytes).toString("hex"));
@@ -475,11 +476,12 @@ const makeTempFileFactory = (fs: IFs, method: string) => {
       Effect.tap((path) => Effect.scoped(open(path, { flag: "w+" }))),
     );
 };
-const makeTempFile = (fs: IFs) => makeTempFileFactory(fs, "makeTempFile");
+const makeTempFile = (fs: IFs, cwd: string) =>
+  makeTempFileFactory(fs, cwd, "makeTempFile");
 
 // makeTempFileScoped
-const makeTempFileScoped = (fs: IFs) => {
-  const makeFile = makeTempFileFactory(fs, "makeTempFileScoped");
+const makeTempFileScoped = (fs: IFs, cwd: string) => {
+  const makeFile = makeTempFileFactory(fs, cwd, "makeTempFileScoped");
   const removeDirectory = removeFactory(fs, "makeTempFileScoped");
   return (options?: FileSystem.MakeTempFileOptions) =>
     Effect.acquireRelease(makeFile(options), (file) =>
@@ -738,8 +740,8 @@ const writeFileString = (fs: IFs) => (path: string, data: string) => {
 };
 
 export const InMemoryFileSystem = (
-  initial?: NestedDirectoryJSON,
-  cwd?: string,
+  initial: NestedDirectoryJSON,
+  cwd: string,
 ) => {
   return Layer.unwrapEffect(
     Effect.gen(function* () {
@@ -755,10 +757,10 @@ export const InMemoryFileSystem = (
         exists: exists(fs),
         link: link(fs),
         makeDirectory: makeDirectory(fs),
-        makeTempDirectory: makeTempDirectory(fs),
-        makeTempDirectoryScoped: makeTempDirectoryScoped(fs),
-        makeTempFile: makeTempFile(fs),
-        makeTempFileScoped: makeTempFileScoped(fs),
+        makeTempDirectory: makeTempDirectory(fs, cwd),
+        makeTempDirectoryScoped: makeTempDirectoryScoped(fs, cwd),
+        makeTempFile: makeTempFile(fs, cwd),
+        makeTempFileScoped: makeTempFileScoped(fs, cwd),
         open: open(fs),
         readDirectory: readDirectory(fs),
         readFile: readFile(fs),
