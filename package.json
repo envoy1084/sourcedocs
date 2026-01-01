@@ -5,7 +5,7 @@
     "@commitlint/config-conventional": "^20.2.0",
     "@sourcedocs/config": "workspace:*",
     "@total-typescript/ts-reset": "^0.6.1",
-    "@vitest/coverage-v8": "4.0.16",
+    "@vitest/coverage-v8": "^4.0.16",
     "lefthook": "^2.0.13",
     "turbo": "^2.7.2",
     "typescript": "^5.9.3",
