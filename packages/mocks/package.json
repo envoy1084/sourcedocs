@@ -28,7 +28,7 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "name": "@sourcedocs/core",
+  "name": "@sourcedocs/mocks",
   "scripts": {
     "build": "tsup",
     "test": "vitest run"

@@ -192,7 +192,7 @@ const makeTempDirectoryFactory = (fs: IFs, method: string) => {
           : os.tmpdir();
 
       return nodeMkdtemp(
-        prefix ? path.join(directory, prefix) : directory + "/",
+        prefix ? path.join(directory, prefix) : `${directory}/`,
       );
     });
 };
