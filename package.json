@@ -17,7 +17,6 @@
   "scripts": {
     "build": "turbo build",
     "commitlint": "commitlint --edit",
-    "coverage": "vitest run --coverage",
     "dev": "turbo dev",
     "format": "pnpm exec biome format --write",
     "format:check": "pnpm exec biome format",
@@ -25,6 +24,9 @@
     "lint:check": "pnpm exec biome check",
     "lint:write": "turbo lint:write",
     "prepare": "lefthook install",
-    "test": "vitest run"
+    "test": "vitest",
+    "test:changed": "vitest run --changed",
+    "test:ci": "vitest run --coverage",
+    "test:watch": "vitest --watch"
   }
 }

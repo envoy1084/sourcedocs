@@ -1,7 +1,8 @@
+import { layerMemory as InMemoryKeyValueStore } from "@effect/platform/KeyValueStore";
 import { Layer } from "effect";
 import type { NestedDirectoryJSON } from "memfs";
 
-import { layer as mockFsLayer } from "./fs";
+import { InMemoryFileSystem } from "./fs";
 import { InMemoryPath } from "./path";
 
 export const InMemoryContext = (
@@ -9,6 +10,7 @@ export const InMemoryContext = (
   cwd?: string,
 ) =>
   Layer.mergeAll(
-    mockFsLayer(initialStructure, cwd ?? "/"),
+    InMemoryFileSystem(initialStructure, cwd ?? "/"),
     InMemoryPath(cwd ?? "/"),
+    InMemoryKeyValueStore,
   );

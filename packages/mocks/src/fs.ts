@@ -101,7 +101,7 @@ const access = (fs: IFs) => {
   };
 };
 
-// == copy
+// copy
 const copy = (fs: IFs) => {
   const nodeCp = effectify(
     fs.cp,
@@ -116,7 +116,7 @@ const copy = (fs: IFs) => {
     });
 };
 
-// == copyFile
+// copyFile
 const copyFile = (fs: IFs) => {
   const nodeCopyFile = effectify(
     fs.copyFile,
@@ -126,7 +126,7 @@ const copyFile = (fs: IFs) => {
   return (fromPath: string, toPath: string) => nodeCopyFile(fromPath, toPath);
 };
 
-// == chmod
+// chmod
 const chmod = (fs: IFs) => {
   const nodeChmod = effectify(
     fs.chmod,
@@ -136,7 +136,7 @@ const chmod = (fs: IFs) => {
   return (path: string, mode: number) => nodeChmod(path, mode);
 };
 
-// == chown
+// chown
 const chown = (fs: IFs) => {
   const nodeChown = effectify(
     fs.chown,
@@ -146,7 +146,7 @@ const chown = (fs: IFs) => {
   return (path: string, uid: number, gid: number) => nodeChown(path, uid, gid);
 };
 
-// == link
+// link
 const link = (fs: IFs) => {
   const nodeLink = effectify(
     fs.link,
@@ -162,7 +162,7 @@ const exists = (fs: IFs) => {
   return (path: string) => Effect.sync(() => fs.existsSync(path));
 };
 
-// == makeDirectory
+// makeDirectory
 const makeDirectory = (fs: IFs) => {
   const nodeMkdir = effectify(
     fs.mkdir,
@@ -176,7 +176,7 @@ const makeDirectory = (fs: IFs) => {
     });
 };
 
-// == makeTempDirectory
+// makeTempDirectory
 const makeTempDirectoryFactory = (fs: IFs, method: string) => {
   const nodeMkdtemp = effectify(
     fs.mkdtemp,
@@ -186,6 +186,7 @@ const makeTempDirectoryFactory = (fs: IFs, method: string) => {
   return (options?: FileSystem.MakeTempDirectoryOptions) =>
     Effect.suspend(() => {
       const prefix = options?.prefix ?? "";
+      // TODO: Maybe change this to not use node:path and node:os
       const directory =
         typeof options?.directory === "string"
           ? path.join(options.directory, ".")
@@ -199,7 +200,7 @@ const makeTempDirectoryFactory = (fs: IFs, method: string) => {
 const makeTempDirectory = (fs: IFs) =>
   makeTempDirectoryFactory(fs, "makeTempDirectory");
 
-// == remove
+// remove
 const removeFactory = (fs: IFs, method: string) => {
   const nodeRm = effectify(
     fs.rm,
@@ -214,7 +215,7 @@ const removeFactory = (fs: IFs, method: string) => {
 };
 const remove = (fs: IFs) => removeFactory(fs, "remove");
 
-// == makeTempDirectoryScoped
+// makeTempDirectoryScoped
 const makeTempDirectoryScoped = (fs: IFs) => {
   const makeDirectory = makeTempDirectoryFactory(fs, "makeTempDirectoryScoped");
   const removeDirectory = removeFactory(fs, "makeTempDirectoryScoped");
@@ -224,7 +225,7 @@ const makeTempDirectoryScoped = (fs: IFs) => {
     );
 };
 
-// == open
+// open
 const openFactory = (fs: IFs, method: string) => {
   const nodeOpen = effectify(
     fs.open,
@@ -459,7 +460,7 @@ const makeFile = (fs: IFs) => {
     new FileImpl(fd, append);
 };
 
-// == makeTempFile
+// makeTempFile
 const makeTempFileFactory = (fs: IFs, method: string) => {
   const makeDirectory = makeTempDirectoryFactory(fs, method);
   const open = openFactory(fs, method);
@@ -476,8 +477,7 @@ const makeTempFileFactory = (fs: IFs, method: string) => {
 };
 const makeTempFile = (fs: IFs) => makeTempFileFactory(fs, "makeTempFile");
 
-// == makeTempFileScoped
-
+// makeTempFileScoped
 const makeTempFileScoped = (fs: IFs) => {
   const makeFile = makeTempFileFactory(fs, "makeTempFileScoped");
   const removeDirectory = removeFactory(fs, "makeTempFileScoped");
@@ -487,8 +487,7 @@ const makeTempFileScoped = (fs: IFs) => {
     );
 };
 
-// == readDirectory
-
+// readDirectory
 const readDirectory =
   (fs: IFs) => (path: string, options?: FileSystem.ReadDirectoryOptions) =>
     Effect.tryPromise({
@@ -497,7 +496,7 @@ const readDirectory =
       try: () => fs.promises.readdir(path, options) as Promise<string[]>,
     });
 
-// == readFile
+// readFile
 const readFile = (fs: IFs) => (path: string) =>
   Effect.async<Uint8Array, PlatformError>((resume) => {
     try {
@@ -526,7 +525,7 @@ const readFileString =
     });
   };
 
-// == readLink
+// readLink
 const readLink = (fs: IFs) => {
   const nodeReadLink = effectify(
     fs.readlink as (path: PathLike, callback: TCallback<string>) => void,
@@ -537,7 +536,7 @@ const readLink = (fs: IFs) => {
   return (path: string) => nodeReadLink(path);
 };
 
-// == realPath
+// realPath
 const realPath = (fs: IFs) => {
   const nodeRealPath = effectify(
     fs.realpath as (path: PathLike, callback: TCallback<string>) => void,
@@ -547,7 +546,7 @@ const realPath = (fs: IFs) => {
   return (path: string) => nodeRealPath(path);
 };
 
-// == rename
+// rename
 const rename = (fs: IFs) => {
   const nodeRename = effectify(
     fs.rename,
@@ -557,7 +556,7 @@ const rename = (fs: IFs) => {
   return (oldPath: string, newPath: string) => nodeRename(oldPath, newPath);
 };
 
-// == stat
+// stat
 const makeFileInfo = (stat: Stats): FileSystem.File.Info => ({
   atime: Option.fromNullable(stat.atime),
   birthtime: Option.fromNullable(stat.birthtime),
@@ -597,8 +596,7 @@ const stat = (fs: IFs) => {
   return (path: string) => Effect.map(nodeStat(path), makeFileInfo);
 };
 
-// == symlink
-
+// symlink
 const symlink = (fs: IFs) => {
   const nodeSymlink = effectify(
     fs.symlink,
@@ -608,8 +606,7 @@ const symlink = (fs: IFs) => {
   return (target: string, path: string) => nodeSymlink(target, path);
 };
 
-// == truncate
-
+// truncate
 const truncate = (fs: IFs) => {
   const nodeTruncate = effectify(
     fs.truncate,
@@ -620,8 +617,7 @@ const truncate = (fs: IFs) => {
     nodeTruncate(path, Number(length ?? 0));
 };
 
-// == utimes
-
+// utimes
 const utimes = (fs: IFs) => {
   const nodeUtimes = effectify(
     fs.utimes,
@@ -632,7 +628,7 @@ const utimes = (fs: IFs) => {
     nodeUtimes(path, atime, mtime);
 };
 
-// == watch
+// watch
 const watchNode = (fs: IFs, path: string, options?: FileSystem.WatchOptions) =>
   Stream.asyncScoped<FileSystem.WatchEvent, PlatformError>((emit) =>
     Effect.acquireRelease(
@@ -705,7 +701,7 @@ const watch =
       Stream.unwrap,
     );
 
-// == writeFile
+// writeFile
 const writeFile =
   (fs: IFs) =>
   (path: string, data: Uint8Array, options?: FileSystem.WriteFileOptions) =>
@@ -735,12 +731,16 @@ const writeFile =
       }
     });
 
+// writeFileString
 const writeFileString = (fs: IFs) => (path: string, data: string) => {
   const arr = Buffer.from(data);
   return writeFile(fs)(path, arr);
 };
 
-export const layer = (initial?: NestedDirectoryJSON, cwd?: string) => {
+export const InMemoryFileSystem = (
+  initial?: NestedDirectoryJSON,
+  cwd?: string,
+) => {
   return Layer.unwrapEffect(
     Effect.gen(function* () {
       const { fs } = memfs(initial, cwd);
@@ -767,8 +767,7 @@ export const layer = (initial?: NestedDirectoryJSON, cwd?: string) => {
         realPath: realPath(fs),
         remove: remove(fs),
         rename: rename(fs),
-        // sink
-        // stream
+        // TODO: Implement sink and stream
         stat: stat(fs),
         symlink: symlink(fs),
         truncate: truncate(fs),
