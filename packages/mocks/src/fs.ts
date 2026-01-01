@@ -237,7 +237,7 @@ const openFactory = (fs: IFs, method: string) => {
     handleBadArgument(method),
   );
 
-  return (fs: IFs, path: string, options?: FileSystem.OpenFileOptions) =>
+  return (path: string, options?: FileSystem.OpenFileOptions) =>
     pipe(
       Effect.acquireRelease(
         nodeOpen(path, options?.flag ?? "r", options?.mode as TMode),
@@ -471,7 +471,7 @@ const makeTempFileFactory = (fs: IFs, method: string) => {
       Effect.map(([directory, random]) =>
         path.join(directory, random + (options?.suffix ?? "")),
       ),
-      Effect.tap((path) => Effect.scoped(open(fs, path, { flag: "w+" }))),
+      Effect.tap((path) => Effect.scoped(open(path, { flag: "w+" }))),
     );
 };
 const makeTempFile = (fs: IFs) => makeTempFileFactory(fs, "makeTempFile");
@@ -759,7 +759,7 @@ export const layer = (initial?: NestedDirectoryJSON, cwd?: string) => {
         makeTempDirectoryScoped: makeTempDirectoryScoped(fs),
         makeTempFile: makeTempFile(fs),
         makeTempFileScoped: makeTempFileScoped(fs),
-        open: (path, opts) => open(fs)(fs, path, opts),
+        open: open(fs),
         readDirectory: readDirectory(fs),
         readFile: readFile(fs),
         readFileString: readFileString(fs),

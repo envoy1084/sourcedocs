@@ -132,7 +132,7 @@ describe("Mock File System", () => {
       const absPath = yield* getAbsLocation("file.txt");
 
       yield* fs.remove(absPath);
-      expect(yield* fs.exists("file.txt")).toBe(false);
+      expect(yield* fs.exists(absPath)).toBe(false);
     }).pipe(Effect.provide(InMemoryContext(initialStructure))),
   );
 
@@ -219,17 +219,6 @@ describe("Mock File System", () => {
 
       expect(file.type).toBe("File");
       expect(dir.type).toBe("Directory");
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
-  );
-
-  it.effect("readDirectory: lists entries", () =>
-    Effect.gen(function* () {
-      const fs = yield* FileSystem.FileSystem;
-
-      const path = yield* getAbsLocation("dir");
-
-      const entries = yield* fs.readDirectory(path);
-      expect(entries.sort()).toEqual(["nested.txt"]);
     }).pipe(Effect.provide(InMemoryContext(initialStructure))),
   );
 

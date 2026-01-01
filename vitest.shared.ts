@@ -1,6 +1,9 @@
-import path from "node:path";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import type { ViteUserConfig } from "vitest/config";
+
+const Dirname = dirname(fileURLToPath(import.meta.url));
 
 export const shared: ViteUserConfig = {
   esbuild: {
@@ -15,7 +18,7 @@ export const shared: ViteUserConfig = {
     sequence: {
       concurrent: true,
     },
-    setupFiles: [path.join(__dirname, "vitest.setup.ts")],
+    setupFiles: [path.join(Dirname, "vitest.setup.ts")],
     testTimeout: 20_000,
   },
 };

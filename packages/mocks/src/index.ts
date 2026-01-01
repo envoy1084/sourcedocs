@@ -1,4 +1,4 @@
-import { Layer, pipe } from "effect";
+import { Layer } from "effect";
 import type { NestedDirectoryJSON } from "memfs";
 
 import { layer as mockFsLayer } from "./fs";
@@ -8,9 +8,7 @@ export const InMemoryContext = (
   initialStructure: NestedDirectoryJSON,
   cwd?: string,
 ) =>
-  pipe(
-    Layer.mergeAll(
-      mockFsLayer(initialStructure, cwd ?? "/"),
-      InMemoryPath(cwd ?? "/"),
-    ),
+  Layer.mergeAll(
+    mockFsLayer(initialStructure, cwd ?? "/"),
+    InMemoryPath(cwd ?? "/"),
   );
