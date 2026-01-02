@@ -25,26 +25,28 @@ export class Collector extends Context.Tag("CollectorService")<
      * Returns a Stream to handle large projects efficiently.
      */
     discoverFiles: () => Effect.Effect<
-      Stream.Stream<
-        RawFile,
-        CollectionError | PlatformError,
-        FileSystem.FileSystem | Path.Path
-      >,
+      Stream.Stream<RawFile, CollectionError | PlatformError>,
       never,
-      SourcedocsConfig
+      SourcedocsConfig | FileSystem.FileSystem | Path.Path
     >;
   }
 >() {}
 
 const createFileStream = Effect.gen(function* () {
   const config = yield* SourcedocsConfig;
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const cwd = path.resolve(".");
 
   const filePathsStream: Stream.Stream<string, CollectionError> = Stream.async(
     (emit) => {
-      const gs = globStream(config.include as string[], {
+      const includePatterns = Array.from(config.include);
+      const excludePatterns = Array.from(config.exclude);
+
+      const gs = globStream(includePatterns, {
         absolute: true,
         cwd: config.root,
-        ignore: config.exclude as string[],
+        ignore: excludePatterns,
         nodir: true,
       });
 
@@ -71,11 +73,6 @@ const createFileStream = Effect.gen(function* () {
     Stream.mapEffect(
       (filePath) =>
         Effect.gen(function* () {
-          const fs = yield* FileSystem.FileSystem;
-          const path = yield* Path.Path;
-
-          const cwd = path.resolve(".");
-
           const absolutePath = AbsPath(filePath);
           const relativePath = RelPath(
             path.relative(config.root ?? cwd, absolutePath),

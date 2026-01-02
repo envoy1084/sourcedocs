@@ -1,4 +1,6 @@
+import tsconfigPaths from "vite-tsconfig-paths";
 import type { ViteUserConfig } from "vitest/config";
+import { mergeConfig } from "vitest/config";
 
 const isCI = process.env.CI === "true";
 
@@ -6,6 +8,7 @@ export const shared: ViteUserConfig = {
   esbuild: {
     target: "es2020",
   },
+  plugins: [tsconfigPaths()],
   test: {
     coverage: {
       enabled: isCI,
@@ -19,7 +22,7 @@ export const shared: ViteUserConfig = {
         "**/.turbo/**",
         "**/node_modules/**",
       ],
-      include: ["packages/**/src/**/*.{ts,tsx}", "apps/**/src/**/*.{ts,tsx}"],
+      include: ["packages/**/src/**/*.{ts,tsx}"],
       reporter: isCI ? ["json", "lcov"] : ["text", "html"],
       reportsDirectory: "coverage",
     },
@@ -35,3 +38,7 @@ export const shared: ViteUserConfig = {
     testTimeout: 20_000,
   },
 };
+
+export function createVitestConfig(config?: ViteUserConfig) {
+  return mergeConfig(shared, config ?? {});
+}

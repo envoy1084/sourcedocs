@@ -7,12 +7,14 @@ import type { RawFile, SourceDocsConfig } from "@/schema";
  * Allows plugins to consume lines at their own pace.
  */
 export type LineCursor = {
-  /** * Look at the current line without advancing.
+  /**
+   * Look at the current line without advancing.
    * Useful for checking "Are we at the end?"
    */
   peek(): Option.Option<string>;
 
-  /** * Return the current line and advance the index +1.
+  /**
+   * Return the current line and advance the index +1.
    */
   next(): Option.Option<string>;
 

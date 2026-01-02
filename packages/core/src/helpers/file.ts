@@ -1,4 +1,4 @@
-import type { SupportedLanguage } from "@sourcedocs/shared";
+import type { SupportedLanguage } from "@/schema";
 
 export const detectLanguage = (ext: string): SupportedLanguage => {
   switch (ext.toLowerCase()) {

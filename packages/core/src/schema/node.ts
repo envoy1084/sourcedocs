@@ -9,7 +9,11 @@ const SourceLocation = Schema.Struct({
   fileId: Schema.String,
   language: SupportedLanguage,
   startLine: Schema.Number,
-});
+}).pipe(
+  Schema.filter((loc) => loc.startLine <= loc.endLine, {
+    message: () => "startLine must be <= endLine",
+  }),
+);
 
 const NodeMetadata = Schema.Struct({
   contentHash: Schema.String,
