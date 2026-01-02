@@ -1,8 +1,4 @@
 import { Path } from "@effect/platform";
-import {
-  type SourceDocsConfig,
-  SourceDocsConfigSchema,
-} from "@sourcedocs/shared";
 import { loadConfig as c12LoadConfig } from "c12";
 import {
   Context,
@@ -13,6 +9,8 @@ import {
   ParseResult,
   Schema,
 } from "effect";
+
+import { type SourceDocsConfig, SourceDocsConfigSchema } from "@/schema";
 
 export class SourcedocsConfig extends Context.Tag("SourcedocsConfig")<
   SourcedocsConfig,
@@ -82,5 +80,5 @@ const resolveConfigInternal = (options: LoadConfigOptions) =>
     return finalConfig;
   });
 
-export const SourcedocsConfigLayer = (options: LoadConfigOptions) =>
+export const SourcedocsConfigLive = (options: LoadConfigOptions) =>
   Layer.effect(SourcedocsConfig, resolveConfigInternal(options));

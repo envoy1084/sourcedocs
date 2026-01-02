@@ -119,7 +119,7 @@
         "noExportedImports": "error",
         "noImplicitBoolean": "error",
         "noInferrableTypes": "error",
-        "noMagicNumbers": "error",
+        "noMagicNumbers": "off",
         "noNamespace": "error",
         "noNestedTernary": "error",
         "noSubstr": "error",

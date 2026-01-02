@@ -1,1 +1,3 @@
-export * from "@sourcedocs/shared";
+export * from "./parser";
+export * from "./plugin";
+export * from "./schema";

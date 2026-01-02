@@ -16,16 +16,13 @@
       },
       "type": "array"
     },
-    "logLevel": {
-      "enum": ["error", "warn", "info", "debug", "silent"],
-      "type": "string"
-    },
     "output": {
       "additionalProperties": false,
       "properties": {
         "adapter": {
           "default": "markdown",
           "enum": ["docusaurus", "gitbook", "fumadocs", "markdown", "json"],
+          "title": "AdapterType",
           "type": "string"
         },
         "clean": {
@@ -39,6 +36,7 @@
         }
       },
       "required": [],
+      "title": "OutputConfig",
       "type": "object"
     },
     "parsing": {
@@ -84,6 +82,7 @@
               "yaml",
               "json"
             ],
+            "title": "SupportedLanguage",
             "type": "string"
           },
           "default": {},
@@ -93,6 +92,7 @@
         }
       },
       "required": [],
+      "title": "ParsingConfig",
       "type": "object"
     },
     "plugins": {
@@ -132,13 +132,19 @@
           "type": "string"
         },
         "name": {
+          "default": "Documentation",
           "type": "string"
         },
-        "url": {
+        "repository": {
+          "default": "https://github.com/envoy1084/sourcedocs",
+          "description": "a string matching the pattern ^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$",
+          "pattern": "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$",
+          "title": "Repository",
           "type": "string"
         }
       },
       "required": [],
+      "title": "ProjectConfig",
       "type": "object"
     },
     "root": {
@@ -150,28 +156,34 @@
         "brokenLinks": {
           "default": "strict",
           "enum": ["strict", "warn", "ignore"],
+          "title": "ValidationMode",
           "type": "string"
         },
         "duplicateIds": {
           "default": "strict",
           "enum": ["strict", "warn", "ignore"],
+          "title": "ValidationMode",
           "type": "string"
         },
         "emptyChapters": {
           "default": "warn",
           "enum": ["strict", "warn", "ignore"],
+          "title": "ValidationMode",
           "type": "string"
         },
         "unparsedFiles": {
           "default": "ignore",
           "enum": ["strict", "warn", "ignore"],
+          "title": "ValidationMode",
           "type": "string"
         }
       },
       "required": [],
+      "title": "ValidationConfig",
       "type": "object"
     }
   },
-  "required": ["include"],
+  "required": [],
+  "title": "SourceDocsConfig",
   "type": "object"
 }

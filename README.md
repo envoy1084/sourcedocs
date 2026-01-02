@@ -1,0 +1,1 @@
+[![codecov](https://codecov.io/gh/envoy1084/sourcedocs/graph/badge.svg?token=IDNT5PFD3V)](https://codecov.io/gh/envoy1084/sourcedocs)
