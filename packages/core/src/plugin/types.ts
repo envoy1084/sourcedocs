@@ -8,6 +8,8 @@ import type { LineCursor, ParserContext } from "../parser/types";
  * A Handler for a specific directive (e.g. @snippet).
  * T = The type of the arguments.
  */
+
+// biome-ignore lint/suspicious/noExplicitAny: safe
 export type CommandHandler<T = any> = {
   /** * Validation Schema for arguments.
    * e.g. @snippet id="abc" -> { id: string }

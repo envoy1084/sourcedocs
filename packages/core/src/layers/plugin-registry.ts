@@ -1,4 +1,4 @@
-import { Chunk, Context, Effect, Hash, HashMap, Layer, Ref } from "effect";
+import { Context, Effect, HashMap, Layer, Ref } from "effect";
 
 import type { CommandHandler, ParserPlugin } from "@/plugin/types";
 
