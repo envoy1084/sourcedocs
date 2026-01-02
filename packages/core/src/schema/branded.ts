@@ -1,7 +1,5 @@
 import { Brand, Schema } from "effect";
 
-import { SupportedLanguage } from "./config";
-
 /**
  * Represents an Absolute Path (e.g., "/Users/anton/project/src/index.ts").
  * You cannot accidentally pass a relative path here.
@@ -23,15 +21,3 @@ export const RelPathSchema = Schema.String.pipe(Schema.fromBrand(RelPath));
 export type NodeId = string & Brand.Brand<"NodeId">;
 export const NodeId = Brand.nominal<NodeId>();
 export const NodeIdSchema = Schema.String.pipe(Schema.fromBrand(NodeId));
-
-// A raw file discovered on disk
-export const RawFile = Schema.Struct({
-  content: Schema.String,
-  extension: Schema.String,
-  id: Schema.String,
-  language: SupportedLanguage,
-  path: AbsPathSchema,
-  relativePath: RelPathSchema,
-});
-
-export type RawFile = typeof RawFile.Type;

@@ -116,19 +116,6 @@ importers:
         specifier: ^4.0.16
         version: 4.0.16(@types/node@25.0.3)(jiti@2.6.1)(tsx@4.21.0)
 
-  packages/shared:
-    dependencies:
-      effect:
-        specifier: ^3.19.13
-        version: 3.19.13
-    devDependencies:
-      '@sourcedocs/config':
-        specifier: workspace:*
-        version: link:../config
-      '@types/node':
-        specifier: ^25.0.3
-        version: 25.0.3
-
 packages:
 
   '@babel/code-frame@7.27.1':

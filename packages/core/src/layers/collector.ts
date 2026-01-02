@@ -1,10 +1,10 @@
 import { FileSystem, Path } from "@effect/platform";
 import type { PlatformError } from "@effect/platform/Error";
-import { AbsPath, RawFile, RelPath } from "@sourcedocs/shared";
 import { Context, Effect, Layer, Schema, Stream } from "effect";
 import { globStream } from "glob";
 
 import { detectLanguage } from "@/helpers/file";
+import { AbsPath, RawFile, RelPath } from "@/schema";
 
 import { SourcedocsConfig } from "./config";
 

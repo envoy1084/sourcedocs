@@ -1,7 +1,8 @@
 import { FileSystem, Path } from "@effect/platform";
 import { NodeContext, NodeRuntime } from "@effect/platform-node";
-import { SourceDocsConfigSchema } from "@sourcedocs/shared";
 import { Effect, JSONSchema } from "effect";
+
+import { SourceDocsConfigSchema } from "@/schema";
 
 const program = Effect.gen(function* () {
   const path = yield* Path.Path;

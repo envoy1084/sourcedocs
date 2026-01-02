@@ -4,8 +4,7 @@
     "baseUrl": ".",
     "incremental": false,
     "paths": {
-      "@/*": ["./src/*"],
-      "@sourcedocs/shared": ["../shared/src/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "exclude": ["node_modules", "dist"],
