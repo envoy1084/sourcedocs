@@ -268,9 +268,11 @@ export const SourceDocsConfigSchema = Schema.Struct({
   /**
    * The root directory of the project.
    *
-   * @default process.cwd()
+   * @default "."
    */
-  root: Schema.optional(Schema.String).annotations({
+  root: Schema.optionalWith(Schema.String, {
+    default: () => ".",
+  }).annotations({
     description: "Root directory for resolving paths. Defaults to CWD.",
   }),
 

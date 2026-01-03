@@ -11,8 +11,8 @@
   "devDependencies": {
     "@effect/vitest": "^0.27.0",
     "@sourcedocs/config": "workspace:*",
+    "@sourcedocs/mocks": "workspace:*",
     "@types/node": "^25.0.3",
-    "tsup": "^8.5.1",
     "tsx": "^4.21.0",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.0.16"
@@ -33,7 +33,7 @@
   "module": "./dist/index.js",
   "name": "@sourcedocs/core",
   "scripts": {
-    "build": "tsup",
+    "build": "tsc -p tsconfig.build.json",
     "prebuild": "tsx ./scripts/prebuild.ts",
     "test": "vitest run"
   },
