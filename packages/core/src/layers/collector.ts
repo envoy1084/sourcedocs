@@ -42,8 +42,6 @@ export const CollectorLive = Layer.effect(
     const glob = yield* Glob;
     const cwd = path.resolve(".");
 
-    console.log("cwd", cwd);
-
     const includePatterns = Array.from(config.include);
     const excludePatterns = Array.from(config.exclude);
 

@@ -25,16 +25,22 @@ export class Glob extends Context.Tag("Glob")<
 export const GlobTest = Layer.effect(
   Glob,
   Effect.gen(function* () {
-    const { fs } = yield* MemFs;
+    const { fs, cwd } = yield* MemFs;
+
+    const commonGlobOpts: GlobOptionsWithFileTypesFalse = {
+      cwd,
+      fs: fs as unknown as FSOption,
+      withFileTypes: false,
+    };
+
     const createGlobStream = (
       include: string | string[],
       opts?: GlobOptionsWithFileTypesFalse,
     ): Stream.Stream<string, GlobError> => {
       return Stream.async((emit) => {
         const gs = globStream(include, {
+          ...commonGlobOpts,
           ...opts,
-          fs: fs as unknown as FSOption,
-          withFileTypes: false,
         });
 
         gs.on("data", (path: string) => {
@@ -62,7 +68,11 @@ export const GlobTest = Layer.effect(
       return Effect.tryPromise({
         catch: (error) => new GlobError({ error }),
         try: (signal) =>
-          glob(include, { fs: fs as unknown as FSOption, signal, ...opts }),
+          glob(include, {
+            signal,
+            ...commonGlobOpts,
+            ...opts,
+          }),
       });
     };
 

@@ -1,4 +1,4 @@
-import { describe, it } from "@effect/vitest";
+import { describe, expect, it } from "@effect/vitest";
 import { Chunk, Effect, Stream } from "effect";
 import { MockRuntime } from "test/shared";
 
@@ -21,8 +21,9 @@ describe("Parser Tests", () => {
       const fileStream = collector.discoverFiles();
 
       const res = yield* Stream.runCollect(fileStream);
+      const arr = Chunk.toArray(res);
 
-      console.log(Chunk.toArray(res));
+      expect(arr.length).toBe(3);
     }).pipe(
       Effect.provide(
         MockRuntime(initialStructure, "/", {
