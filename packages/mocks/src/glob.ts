@@ -48,6 +48,7 @@ export const GlobTest = Layer.effect(
         });
 
         gs.on("error", (error) => {
+          console.log(error);
           emit.fail(
             new GlobError({
               error,

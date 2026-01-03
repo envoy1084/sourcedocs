@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Chunk, Effect, Stream } from "effect";
-import { MockRuntime } from "test/shared";
+import { TestRuntime } from "test/shared";
 
 import { Collector } from "@/layers/collector";
 
@@ -26,7 +26,7 @@ describe("Parser Tests", () => {
       expect(arr.length).toBe(3);
     }).pipe(
       Effect.provide(
-        MockRuntime(initialStructure, "/", {
+        TestRuntime(initialStructure, "/", {
           overrides: {
             include: ["**/*.ts"],
           },

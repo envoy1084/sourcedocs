@@ -7,7 +7,7 @@ import { ParserLive } from "@/layers/parser";
 import { PluginRegistryLive } from "@/layers/plugin-registry";
 import { SyntaxLive } from "@/layers/syntax";
 
-export const MockRuntime = (
+export const TestRuntime = (
   initialStructure?: NestedDirectoryJSON,
   cwd?: string,
   config?: LoadConfigOptions,

@@ -51,10 +51,7 @@ export const GlobLive = Layer.effect(
       include: string | string[],
       opts?: GlobOptionsWithFileTypesFalse,
     ) => {
-      return Effect.tryPromise({
-        catch: (error) => new GlobError({ error }),
-        try: (signal) => glob(include, { signal, ...opts }),
-      });
+      return Effect.promise((signal) => glob(include, { signal, ...opts }));
     };
 
     return { glob: createGlob, globStream: createGlobStream };
