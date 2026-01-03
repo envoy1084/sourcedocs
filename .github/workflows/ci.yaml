@@ -24,6 +24,9 @@ jobs:
               with:
                   node-version: 23.7.0
 
+            - name: Build
+              run: pnpm build
+
             - name: Run tests
               run: pnpm test:ci
               env:
