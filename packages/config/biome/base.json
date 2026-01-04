@@ -119,7 +119,6 @@
         "noExportedImports": "error",
         "noImplicitBoolean": "error",
         "noInferrableTypes": "error",
-        "noMagicNumbers": "off",
         "noNamespace": "error",
         "noNestedTernary": "error",
         "noSubstr": "error",
@@ -129,7 +128,6 @@
         "recommended": true,
         "useArrayLiterals": "error",
         "useAtIndex": "error",
-        "useBlockStatements": "error",
         "useCollapsedElseIf": "error",
         "useCollapsedIf": "error",
         "useConsistentBuiltinInstantiation": "error",
@@ -211,6 +209,16 @@
         "**/*.config.cjs"
       ],
       "linter": { "rules": { "style": { "noDefaultExport": "off" } } }
+    },
+    {
+      "includes": ["**/*.test.ts", "**/*.spec.ts"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": "off"
+          }
+        }
+      }
     }
   ],
   "vcs": {

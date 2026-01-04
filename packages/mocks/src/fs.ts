@@ -16,10 +16,12 @@ import {
   type SystemErrorReason,
 } from "@effect/platform/Error";
 import { type Context, Effect, Layer, Option, pipe, Stream } from "effect";
-import { type IFs, memfs, type NestedDirectoryJSON } from "memfs";
+import type { IFs } from "memfs";
 import type { Stats } from "memfs/lib/node/Stats";
 import type { PathLike, TCallback } from "memfs/lib/node/types/misc";
 import type { IError, TMode } from "memfs/lib/node/volume";
+
+import { MemFs } from "./memfs";
 
 const handleErrnoException =
   (module: SystemError["module"], method: string) =>
@@ -168,9 +170,10 @@ const makeDirectory = (fs: IFs) => {
     handleErrnoException("FileSystem", "makeDirectory"),
     handleBadArgument("makeDirectory"),
   );
+
   return (path: string, options?: FileSystem.MakeDirectoryOptions) =>
     nodeMkdir(path, {
-      mode: options?.mode,
+      mode: options?.mode ?? 0o777,
       recursive: options?.recursive ?? false,
     });
 };
@@ -637,7 +640,7 @@ const watchNode = (fs: IFs, path: string, options?: FileSystem.WatchOptions) =>
       Effect.sync(() => {
         const watcher = fs.watch(
           path,
-          { recursive: options?.recursive },
+          { recursive: options?.recursive ?? false },
           (event, path) => {
             if (!path) {
               return;
@@ -739,47 +742,43 @@ const writeFileString = (fs: IFs) => (path: string, data: string) => {
   return writeFile(fs)(path, arr);
 };
 
-export const InMemoryFileSystem = (
-  initial: NestedDirectoryJSON,
-  cwd: string,
-) => {
-  return Layer.unwrapEffect(
-    Effect.gen(function* () {
-      const { fs } = memfs(initial, cwd);
-      const backend = yield* Effect.serviceOption(FileSystem.WatchBackend);
+export const InMemoryFileSystem = Layer.unwrapEffect(
+  Effect.gen(function* () {
+    const { fs, cwd } = yield* MemFs;
 
-      return FileSystem.layerNoop({
-        access: access(fs),
-        chmod: chmod(fs),
-        chown: chown(fs),
-        copy: copy(fs),
-        copyFile: copyFile(fs),
-        exists: exists(fs),
-        link: link(fs),
-        makeDirectory: makeDirectory(fs),
-        makeTempDirectory: makeTempDirectory(fs, cwd),
-        makeTempDirectoryScoped: makeTempDirectoryScoped(fs, cwd),
-        makeTempFile: makeTempFile(fs, cwd),
-        makeTempFileScoped: makeTempFileScoped(fs, cwd),
-        open: open(fs),
-        readDirectory: readDirectory(fs),
-        readFile: readFile(fs),
-        readFileString: readFileString(fs),
-        readLink: readLink(fs),
-        realPath: realPath(fs),
-        remove: remove(fs),
-        rename: rename(fs),
-        // TODO: Implement sink and stream
-        stat: stat(fs),
-        symlink: symlink(fs),
-        truncate: truncate(fs),
-        utimes: utimes(fs),
-        watch(path, options) {
-          return watch(fs)(backend, path, options);
-        },
-        writeFile: writeFile(fs),
-        writeFileString: writeFileString(fs),
-      });
-    }),
-  );
-};
+    const backend = yield* Effect.serviceOption(FileSystem.WatchBackend);
+
+    return FileSystem.layerNoop({
+      access: access(fs),
+      chmod: chmod(fs),
+      chown: chown(fs),
+      copy: copy(fs),
+      copyFile: copyFile(fs),
+      exists: exists(fs),
+      link: link(fs),
+      makeDirectory: makeDirectory(fs),
+      makeTempDirectory: makeTempDirectory(fs, cwd),
+      makeTempDirectoryScoped: makeTempDirectoryScoped(fs, cwd),
+      makeTempFile: makeTempFile(fs, cwd),
+      makeTempFileScoped: makeTempFileScoped(fs, cwd),
+      open: open(fs),
+      readDirectory: readDirectory(fs),
+      readFile: readFile(fs),
+      readFileString: readFileString(fs),
+      readLink: readLink(fs),
+      realPath: realPath(fs),
+      remove: remove(fs),
+      rename: rename(fs),
+      // TODO: Implement sink and stream
+      stat: stat(fs),
+      symlink: symlink(fs),
+      truncate: truncate(fs),
+      utimes: utimes(fs),
+      watch(path, options) {
+        return watch(fs)(backend, path, options);
+      },
+      writeFile: writeFile(fs),
+      writeFileString: writeFileString(fs),
+    });
+  }),
+);

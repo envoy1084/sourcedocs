@@ -3,6 +3,7 @@
     "@biomejs/biome": "2.3.10",
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
+    "@effect/language-service": "^0.64.0",
     "@sourcedocs/config": "workspace:*",
     "@total-typescript/ts-reset": "^0.6.1",
     "@vitest/coverage-v8": "^4.0.16",

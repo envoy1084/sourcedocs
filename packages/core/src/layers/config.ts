@@ -22,7 +22,9 @@ export type LoadConfigOptions = {
   overrides?: Partial<SourceDocsConfig>;
 };
 
-class ConfigError extends Data.TaggedError("ConfigError")<{
+export class SourceDocsConfigError extends Data.TaggedError(
+  "SourceDocsConfigError",
+)<{
   message: string;
   error: unknown;
 }> {}
@@ -30,16 +32,22 @@ class ConfigError extends Data.TaggedError("ConfigError")<{
 const loadConfigC12 = (cwd: string, options: LoadConfigOptions) => {
   return Effect.tryPromise({
     catch: (error) => {
-      return new ConfigError({ error, message: "Failed to load config" });
+      return new SourceDocsConfigError({
+        error,
+        message: "Failed to load config",
+      });
     },
     try: () => {
       return c12LoadConfig({
-        configFile: options.configFile,
+        ...(options.configFile !== undefined
+          ? { configFile: options.configFile }
+          : {}),
         cwd,
         dotenv: true,
         globalRc: true,
         name: "sourcedocs",
         overrides: options.overrides,
+        packageJson: false,
         rcFile: ".sourcedocsrc",
       });
     },
@@ -63,7 +71,7 @@ const resolveConfigInternal = (options: LoadConfigOptions) =>
       const errorMsg = ParseResult.TreeFormatter.formatErrorSync(result.left);
       yield* Effect.logError(errorMsg);
       return yield* Effect.fail(
-        new ConfigError({ error: result.left, message: errorMsg }),
+        new SourceDocsConfigError({ error: result.left, message: errorMsg }),
       );
     }
 
@@ -72,9 +80,7 @@ const resolveConfigInternal = (options: LoadConfigOptions) =>
     // Normalization logic
     const finalConfig: SourceDocsConfig = {
       ...validatedConfig,
-      root: validatedConfig.root
-        ? path.resolve(cwd, validatedConfig.root)
-        : cwd,
+      root: path.resolve(cwd, validatedConfig.root),
     };
 
     return finalConfig;

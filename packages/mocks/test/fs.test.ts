@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/complexity/noExcessiveLinesPerFunction: safe */
-
 import { FileSystem, Path } from "@effect/platform";
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Exit, Option } from "effect";
@@ -14,6 +12,8 @@ const initialStructure = {
 };
 
 describe("Mock File System", () => {
+  const TestEnv = InMemoryContext.layer(initialStructure);
+
   const getAbsLocation = (...segments: string[]) =>
     Effect.gen(function* () {
       const path = yield* Path.Path;
@@ -31,7 +31,7 @@ describe("Mock File System", () => {
       expect(yield* fs.exists(yield* getAbsLocation("missing.txt"))).toBe(
         false,
       );
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("readFileString: reads content", () =>
@@ -42,7 +42,7 @@ describe("Mock File System", () => {
         yield* getAbsLocation("file.txt"),
       );
       expect(content).toBe("hello");
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("readFileString: missing file fails", () =>
@@ -52,7 +52,7 @@ describe("Mock File System", () => {
       const exit = yield* Effect.exit(fs.readFileString("missing.txt"));
 
       expect(Exit.isFailure(exit)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("writeFile: writes data", () =>
@@ -66,7 +66,7 @@ describe("Mock File System", () => {
       yield* fs.writeFile(absPath, data);
       const returnedData = yield* fs.readFile(absPath);
       expect(Buffer.from(returnedData).toString()).toBe(data.toString());
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("writeFileString: creates file", () =>
@@ -77,7 +77,7 @@ describe("Mock File System", () => {
 
       yield* fs.writeFileString(absPath, "data");
       expect(yield* fs.readFileString(absPath)).toBe("data");
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("writeFileString: overwrites file", () =>
@@ -88,7 +88,7 @@ describe("Mock File System", () => {
 
       yield* fs.writeFileString(absPath, "new");
       expect(yield* fs.readFileString(absPath)).toBe("new");
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("makeDirectory: creates nested dirs", () =>
@@ -99,7 +99,7 @@ describe("Mock File System", () => {
 
       yield* fs.makeDirectory(absPath, { recursive: true });
       expect(yield* fs.exists(absPath)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("readDirectory: lists entries", () =>
@@ -110,7 +110,7 @@ describe("Mock File System", () => {
 
       const entries = yield* fs.readDirectory(absPath, { recursive: true });
       expect(entries.sort()).toEqual(["nested.txt"]);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("readDirectory: file fails", () =>
@@ -122,7 +122,7 @@ describe("Mock File System", () => {
       const exit = yield* Effect.exit(fs.readDirectory(absPath));
 
       expect(Exit.isFailure(exit)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("remove: deletes file", () =>
@@ -133,7 +133,7 @@ describe("Mock File System", () => {
 
       yield* fs.remove(absPath);
       expect(yield* fs.exists(absPath)).toBe(false);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("remove: deletes directory recursively", () =>
@@ -144,7 +144,7 @@ describe("Mock File System", () => {
 
       yield* fs.remove(absPath, { recursive: true });
       expect(yield* fs.exists(absPath)).toBe(false);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("rename: moves file", () =>
@@ -158,7 +158,7 @@ describe("Mock File System", () => {
 
       expect(yield* fs.exists(oldPath)).toBe(false);
       expect(yield* fs.exists(newPath)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("rename: moves directory", () =>
@@ -176,7 +176,7 @@ describe("Mock File System", () => {
       expect(yield* fs.exists(yield* getAbsLocation("dir2/nested.txt"))).toBe(
         true,
       );
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("copyFile: duplicates file", () =>
@@ -190,7 +190,7 @@ describe("Mock File System", () => {
 
       expect(yield* fs.readFileString(path2)).toBe("hello");
       expect(yield* fs.readFileString(path1)).toBe("hello");
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("copy: copies directory with overwrite", () =>
@@ -204,7 +204,7 @@ describe("Mock File System", () => {
 
       expect(yield* fs.readFileString(path2)).toBe("hello");
       expect(yield* fs.readFileString(path1)).toBe("hello");
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("stat: file vs directory", () =>
@@ -219,7 +219,7 @@ describe("Mock File System", () => {
 
       expect(file.type).toBe("File");
       expect(dir.type).toBe("Directory");
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("access: existing path succeeds", () =>
@@ -227,7 +227,7 @@ describe("Mock File System", () => {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* getAbsLocation("file.txt");
       yield* fs.access(path);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("access: missing path fails", () =>
@@ -238,7 +238,7 @@ describe("Mock File System", () => {
 
       const exit = yield* Effect.exit(fs.access(path));
       expect(Exit.isFailure(exit)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("chmod: does not throw", () =>
@@ -249,7 +249,7 @@ describe("Mock File System", () => {
 
       const Perms = 0o777;
       yield* fs.chmod(path, Perms);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("link: creates a link", () =>
@@ -268,7 +268,7 @@ describe("Mock File System", () => {
       const newContent = yield* fs.readFileString(newPath);
 
       expect(oldContent).toEqual(newContent);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    }).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("makeTempDirectory: creates a temp directory at root", () => {
@@ -278,7 +278,7 @@ describe("Mock File System", () => {
       const absPath = yield* fs.makeTempDirectory();
 
       expect(yield* fs.exists(absPath)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure)));
+    }).pipe(Effect.provide(InMemoryContext.layer(initialStructure)));
   });
 
   it.effect("makeTempDirectory: creates a temp directory inside a dir", () => {
@@ -289,7 +289,7 @@ describe("Mock File System", () => {
       const root = absPath.split("/")[1] ?? "";
       expect(root).toBe("dir");
       expect(yield* fs.exists(absPath)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure)));
+    }).pipe(Effect.provide(InMemoryContext.layer(initialStructure)));
   });
 
   it.effect("makeTempDirectory: creates a temp with prefix", () => {
@@ -301,7 +301,7 @@ describe("Mock File System", () => {
 
       expect(match?.[0]).toBeTruthy();
       expect(yield* fs.exists(absPath)).toBe(true);
-    }).pipe(Effect.provide(InMemoryContext(initialStructure)));
+    }).pipe(Effect.provide(InMemoryContext.layer(initialStructure)));
   });
 
   it.effect("open: opens file", () =>
@@ -319,7 +319,7 @@ describe("Mock File System", () => {
 
         expect(stats.type).toBe("File");
       }),
-    ).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    ).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("open: reads a certain number of bytes", () =>
@@ -341,7 +341,7 @@ describe("Mock File System", () => {
           );
         }
       }),
-    ).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    ).pipe(Effect.provide(TestEnv)),
   );
 
   it.effect("open: should seek and write to file", () =>
@@ -365,6 +365,6 @@ describe("Mock File System", () => {
 
         expect(data2).toBe("worldworld");
       }),
-    ).pipe(Effect.provide(InMemoryContext(initialStructure))),
+    ).pipe(Effect.provide(TestEnv)),
   );
 });

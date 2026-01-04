@@ -148,6 +148,7 @@
       "type": "object"
     },
     "root": {
+      "description": "Root directory for resolving paths. Defaults to CWD.",
       "type": "string"
     },
     "validation": {

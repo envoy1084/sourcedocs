@@ -23,6 +23,7 @@ export const shared: ViteUserConfig = {
         "**/node_modules/**",
       ],
       include: ["packages/**/src/**/*.{ts,tsx}"],
+      provider: "v8",
       reporter: isCI ? ["json", "lcov"] : ["text", "html"],
       reportsDirectory: "coverage",
     },
