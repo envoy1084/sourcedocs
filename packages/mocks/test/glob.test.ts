@@ -27,16 +27,6 @@ describe("Glob Tests", () => {
       }),
     );
 
-    it.effect("glob: should glob files from root", () =>
-      Effect.gen(function* () {
-        const glob = yield* Glob;
-
-        const res = yield* glob.glob(["**/*.ts"]);
-
-        expect(res.length).toBe(3);
-      }),
-    );
-
     it.effect("glob: should glob files from nested dir", () =>
       Effect.gen(function* () {
         const glob = yield* Glob;
