@@ -55,7 +55,8 @@ export function parseArgsString(input: string): DirectiveData["args"] {
       args[key] = true; // Flag
     else if (value === "true") args[key] = true;
     else if (value === "false") args[key] = false;
-    else if (!Number.isNaN(Number(value))) args[key] = Number(value);
+    else if (value !== "" && !Number.isNaN(Number(value)))
+      args[key] = Number(value);
     else args[key] = value;
   }
 
