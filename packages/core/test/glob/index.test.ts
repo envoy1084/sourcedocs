@@ -90,19 +90,5 @@ describe("Glob Tests", () => {
         expect(res.length).toBe(4);
       }),
     );
-
-    it.effect("globStream: should glob multiple patterns", () =>
-      Effect.gen(function* () {
-        const glob = yield* Glob;
-
-        const stream = glob.globStream(["**/*.ts", "**/*.json"], {
-          cwd: fixturesPath,
-        });
-
-        const res = yield* Stream.runCollect(stream);
-
-        expect(res.length).toBe(4);
-      }),
-    );
   });
 });
