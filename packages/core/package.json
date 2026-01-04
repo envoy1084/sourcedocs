@@ -21,7 +21,8 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./schema.json": "./dist/schema.json"
   },
   "files": [
     "dist",
@@ -34,7 +35,7 @@
   "name": "@sourcedocs/core",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "prebuild": "tsx ./scripts/prebuild.ts",
+    "postbuild": "tsx ./scripts/postbuild.ts",
     "test": "vitest run"
   },
   "type": "module",

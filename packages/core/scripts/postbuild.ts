@@ -10,7 +10,7 @@ const program = Effect.gen(function* () {
 
   const cwd = path.resolve(".");
 
-  const JSON_SCHEMA_BASE_PATH = path.join(cwd, "schemas");
+  const JSON_SCHEMA_BASE_PATH = path.join(cwd, "dist");
   const JSON_SCHEMA_PATH = path.join(JSON_SCHEMA_BASE_PATH, "schema.json");
 
   const dirExists = yield* fs.exists(JSON_SCHEMA_BASE_PATH);
@@ -28,5 +28,4 @@ const program = Effect.gen(function* () {
 });
 
 const runner = program.pipe(Effect.provide(NodeContext.layer));
-
 NodeRuntime.runMain(runner);
