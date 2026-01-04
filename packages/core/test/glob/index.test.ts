@@ -17,8 +17,6 @@ describe("Glob Tests", () => {
       Effect.gen(function* () {
         const glob = yield* Glob;
 
-        console.log(fixturesPath);
-
         const res = yield* glob.glob(["**/*.ts"], {
           cwd: fixturesPath,
         });
